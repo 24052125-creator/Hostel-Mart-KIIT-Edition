@@ -145,7 +145,7 @@ export default function LoginPage() {
 
 // redirect logic: if token present, send user to dashboard
 // keep small and client-only
-export function useRedirectIfAuthenticated(router: any) {
+function useRedirectIfAuthenticated(router: any) {
   useEffect(() => {
     try {
       const token = localStorage.getItem("token");
