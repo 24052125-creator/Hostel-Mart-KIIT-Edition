@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { IKContext, IKUpload } from "imagekitio-react";
+import { ImageKitProvider, IKUpload } from "imagekitio-next";
 import { FaCloudUploadAlt, FaSpinner } from "react-icons/fa";
 import { toast } from "sonner";
 
@@ -61,7 +61,7 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
   }
 
   return (
-    <IKContext
+    <ImageKitProvider
       publicKey={publicKey.trim()}
       urlEndpoint={urlEndpoint.trim()}
       authenticator={async () => {
@@ -71,6 +71,7 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
             throw new Error(`Authentication request failed: ${response.statusText}`);
           }
           const data = await response.json();
+          // The authenticator expects an object with token, signature, and expire
           return data;
         } catch (error) {
           throw new Error(`Authentication failed: ${error}`);
@@ -108,6 +109,6 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
           )}
         </button>
       </div>
-    </IKContext>
+    </ImageKitProvider>
   );
 }
