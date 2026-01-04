@@ -54,7 +54,8 @@ export async function createProduct(
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || "Failed to create product");
+            console.error("Create product API failed:", response.status, errorData);
+            throw new Error(errorData.error || errorData.message || "Failed to create product");
         }
 
         const data = await response.json();
@@ -85,8 +86,8 @@ export async function updateProduct(
 
         if (!response.ok) {
             const errorData = await response.json();
-            console.error("Create product API failed:", response.status, errorData);
-            throw new Error(errorData.error || "Failed to update product");
+            console.error("Update product API failed:", response.status, errorData);
+            throw new Error(errorData.error || errorData.message || "Failed to update product");
         }
 
         const data = await response.json();

@@ -47,7 +47,7 @@ export function AddProductModal({ onClose, onAdd, initialData }: AddProductModal
     const { name, value, type } = e.target;
     setFormData((prev) => ({ 
       ...prev, 
-      [name]: type === 'number' ? Number(value) : value 
+      [name]: type === 'number' ? (name === 'stock' ? Number(value) : String(value)) : value 
     }));
   };
 

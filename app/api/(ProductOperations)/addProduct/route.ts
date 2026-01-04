@@ -10,7 +10,7 @@ const reqSchema = z.object({
   description: z.string().optional(),
   size: z.string(),
   tags: z.array(z.enum(["fixed price", "negotiable", "doorstep delivery", "at mrp"])).optional(),
-  price: z.string(),
+  price: z.coerce.string(),
   stock: z.number().min(0, "Stock cannot be negative"),
   storeId: z.string()
 })
@@ -30,8 +30,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parsedBody = reqSchema.safeParse(body);
     if (!parsedBody.success) {
-      console.log(parsedBody.error);
-      return NextResponse.json({ message: "Invalid Request Data" }, { status: 400 });
+      console.log("Validation Error:", parsedBody.error);
+      return NextResponse.json({
+        message: "Invalid Request Data",
+        error: parsedBody.error.issues.map((issue: { message: string }) => issue.message).join(", ")
+      }, { status: 400 });
     }
     const { name, image, description, size, tags, price, stock, storeId } = parsedBody.data;
     const newProduct = new Product(
