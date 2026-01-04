@@ -145,16 +145,6 @@ export default function Dasboard() {
             />
           </div>
           
-          <div className="w-full">
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-left">Store Logo / Image</label>
-            {/* <FileUpload onSuccess={(res: IKUploadResponse) => setStoreImage(res.url)} /> */}
-            {storeImage && (
-              <div className="mt-2 w-32 h-32 rounded-lg overflow-hidden border border-gray-200 mx-auto">
-                <img src={storeImage} alt="Store Preview" className="w-full h-full object-cover" />
-              </div>
-            )}
-          </div>
-
           {error && <div>
             <p className="text-red-500 text-sm">{error}</p>
             </div>}
