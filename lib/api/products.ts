@@ -85,6 +85,7 @@ export async function updateProduct(
 
         if (!response.ok) {
             const errorData = await response.json();
+            console.error("Create product API failed:", response.status, errorData);
             throw new Error(errorData.error || "Failed to update product");
         }
 
