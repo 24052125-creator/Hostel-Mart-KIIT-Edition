@@ -6,7 +6,7 @@ import Store from "@/models/Store";
 import jwt from "jsonwebtoken";
 
 const TIMEOUT = 30000; // 30 seconds
-const POLL_INTERVAL = 1000; // Check every 1 second
+const POLL_INTERVAL = 1000; // Checking every 1 second
 
 function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -15,8 +15,6 @@ function sleep(ms: number) {
 export async function GET(req: NextRequest) {
     try {
         await connectDB();
-
-        // Get user from token
         const token = req.headers.get("authorization")?.replace("Bearer ", "");
         if (!token) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -27,7 +25,6 @@ export async function GET(req: NextRequest) {
         };
         const userId = decoded.id;
 
-        // Get query parameters
         const searchParams = req.nextUrl.searchParams;
         const orderId = searchParams.get("orderId");
         const lastMessageId = searchParams.get("lastMessageId");
@@ -39,7 +36,6 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        // Verify access to order
         let order;
         try {
             order = await Order.findById(orderId);
@@ -64,7 +60,6 @@ export async function GET(req: NextRequest) {
             });
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
-
         // Long polling logic
         let elapsed = 0;
         while (elapsed < TIMEOUT) {
