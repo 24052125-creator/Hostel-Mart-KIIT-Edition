@@ -50,6 +50,9 @@ export function handleLogout(showToast: boolean = false, redirectTo: string = '/
     localStorage.removeItem('role');
     localStorage.removeItem('lastOrderId');
 
+    // Clear the token cookie
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Strict;";
+
     if (showToast) {
         toast.error('Your session has expired. Please login again.');
     }

@@ -1,11 +1,13 @@
 "use client"
 
 import Link from "next/link";
+import { FaPlus, FaHome, FaStore } from "react-icons/fa";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/hooks/use-store";
 import { useAuth } from "@/hooks/use-auth";
 import { getStoreByUserId } from "@/lib/api/stores";
+import { handleLogout as clearAuth } from "@/lib/auth";
 
 export default function NavBar() {
   const router = useRouter();
@@ -83,16 +85,7 @@ export default function NavBar() {
   }, [refreshAuth]);
 
   const handleLogout = () => {
-    try {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("store");
-      localStorage.removeItem("role");
-      setIsProfileOpen(false);
-      setUserData(null);
-      window.dispatchEvent(new Event("authChange"));
-    } catch (e) {}
-    router.push("/");
+    clearAuth(true, "/");
   };
 
   const toggleRole = () => {
@@ -134,23 +127,55 @@ export default function NavBar() {
         justifyContent: "space-between",
         gap: 12
       }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none", color: '#000' }}>
-          <div style={{
-            width: 40,
-            height: 40,
-            borderRadius: 8,
-            background: "#2563eb",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-            fontWeight: 800
-          }}>HM</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none", color: '#000' }}>
+            <div style={{
+              width: 40,
+              height: 40,
+              borderRadius: 8,
+              background: "#2563eb",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              fontWeight: 800
+            }}>HM</div>
 
-          <div style={{ fontWeight: 700 }}>
-            Hostel Mart ~ KIIT Edition
-          </div>
-        </Link>
+            <div style={{ fontWeight: 700 }}>
+              Hostel Mart ~ KIIT Edition
+            </div>
+          </Link>
+          
+          <Link href="/" style={{ 
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontWeight: 700, 
+            color: '#2563eb', 
+            textDecoration: 'none',
+            fontSize: '0.95rem',
+            padding: '8px 18px',
+            borderRadius: '12px',
+            background: 'rgba(37,99,235,0.1)',
+            border: '2px solid rgba(37,99,235,0.2)',
+            boxShadow: '0 2px 4px rgba(37,99,235,0.05)',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'rgba(37,99,235,0.15)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(37,99,235,0.15)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'rgba(37,99,235,0.1)';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 4px rgba(37,99,235,0.05)';
+          }}
+          >
+            <FaHome size={20} />
+            <span style={{ letterSpacing: '0.02em' }}>HOME</span>
+          </Link>
+        </div>
 
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {!isLoggedIn ? (
@@ -175,6 +200,34 @@ export default function NavBar() {
             </>
           ) : (
             <>
+              {isSeller && store && (
+                <Link href="/dasboard/edit-store" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontWeight: 700, 
+                  color: '#059669', 
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  padding: '8px 14px',
+                  borderRadius: '10px',
+                  background: 'rgba(16,185,129,0.08)',
+                  border: '1px solid rgba(16,185,129,0.15)',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(16,185,129,0.15)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(16,185,129,0.08)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                >
+                  <FaStore size={16} />
+                  Edit Store
+                </Link>
+              )}
               <div style={{ position: 'relative' }} ref={profileRef}>
                 <button 
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -224,10 +277,26 @@ export default function NavBar() {
                         <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111827' }}>{userData?.kiitMailId || 'N/A'}</p>
                       </div>
                       
-                      <div>
-                        <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>Store Name</p>
-                        <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111827' }}>{store?.name || 'None'}</p>
-                      </div>
+                      {store && (
+                        <div>
+                          <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>Store</p>
+                          <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111827' }}>{store?.name}</p>
+                          <Link 
+                            href="/dasboard/edit-store" 
+                            onClick={() => setIsProfileOpen(false)}
+                            style={{ 
+                              display: 'inline-block',
+                              marginTop: '8px',
+                              fontSize: '0.8rem', 
+                              color: '#2563eb', 
+                              textDecoration: 'none',
+                              fontWeight: 600
+                            }}
+                          >
+                            Edit Store Details
+                          </Link>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

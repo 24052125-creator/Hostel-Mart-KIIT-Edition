@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
             { expiresIn: "8h" }
 
         );
-        return NextResponse.json(
+        const response = NextResponse.json(
             {
                 message: "Logged in successfully!",
                 token,
@@ -50,6 +50,17 @@ export async function POST(req: NextRequest) {
                     kiitMailId: existingUser.kiitMailId
                 }
             }, { status: 200 });
+
+        // Set the token in an HTTP-only cookie
+        response.cookies.set("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 8 * 60 * 60, // 8 hours
+            path: "/",
+        });
+
+        return response;
     }
     catch (error) {
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });

@@ -87,3 +87,52 @@ export async function getStoreByID(storeId: string): Promise<StoreData | null> {
         throw error;
     }
 }
+/**
+ * Update store details
+ */
+export async function updateStore(storeId: string, storeData: Partial<StoreData>, token: string): Promise<StoreData> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/updateStore/${storeId}`, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(storeData),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Failed to update store");
+        }
+
+        const data = await response.json();
+        return data.store;
+    } catch (error) {
+        console.error("Error updating store:", error);
+        throw error;
+    }
+}
+
+/**
+ * Delete store permanently
+ */
+export async function deleteStore(storeId: string, token: string): Promise<void> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/deleteStore/${storeId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Failed to delete store");
+        }
+    } catch (error) {
+        console.error("Error deleting store:", error);
+        throw error;
+    }
+}
