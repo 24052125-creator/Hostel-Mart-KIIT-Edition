@@ -20,10 +20,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ user
                 { status: 400 }
             );
         }
-        const cart = await Cart.find({ userId });
-        console.log(cart);
+        const cart = await Cart.findOne({ userId }).populate('items.productId');
+
         if (!cart) {
-            return NextResponse.json({ message: "Cart is Empty" }, { status: 500 });
+            return NextResponse.json({ message: "Cart is Empty", cart: null }, { status: 200 });
         }
         return NextResponse.json({ cart }, { status: 200 });
     }

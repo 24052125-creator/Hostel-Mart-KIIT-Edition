@@ -84,8 +84,8 @@ export default function NavBar() {
     };
   }, [refreshAuth]);
 
-  const handleLogout = () => {
-    clearAuth(true, "/");
+  const handleLogout = async () => {
+    await clearAuth(true, "/");
   };
 
   const toggleRole = () => {

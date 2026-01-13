@@ -5,6 +5,7 @@ import React, { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useStore } from "@/hooks/use-store";
 import { updateStore, deleteStore } from "@/lib/api/stores";
+import { HOSTELS, FLOORS } from "@/lib/constants";
 
 export default function EditStore() {
   const { store, setStore, removeStore } = useStore();
@@ -101,25 +102,35 @@ export default function EditStore() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Hostel</label>
-                  <input
+                  <select
                     name="hostel"
                     defaultValue={store.hostel}
                     required
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                    type="text"
-                    placeholder="e.g. KP-7"
-                  />
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all appearance-none"
+                  >
+                    <option value="" disabled>Select Hostel</option>
+                    {HOSTELS.map((hostel) => (
+                      <option key={hostel} value={hostel}>
+                        {hostel}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Floor</label>
-                  <input
+                  <select
                     name="floor"
                     defaultValue={store.floor}
                     required
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                    type="text"
-                    placeholder="e.g. 3rd Floor"
-                  />
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all appearance-none"
+                  >
+                    <option value="" disabled>Select Floor</option>
+                    {FLOORS.map((floor) => (
+                      <option key={floor} value={floor}>
+                        {floor}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
@@ -149,11 +160,11 @@ export default function EditStore() {
             </div>
           </form>
 
-          <div className="bg-red-50/50 p-8 border-t border-red-100">
-            <h3 className="text-red-800 font-bold mb-2">Danger Zone</h3>
+            {/* <h3 className="text-red-800 font-bold mb-2">Danger Zone</h3>
             <p className="text-red-600 text-sm mb-6">
               Once you delete your store, all your products will still exist in the database but your store profile will be removed. This action cannot be undone.
-            </p>
+            </p> */}
+          <div className="bg-red-50/50 p-8 border-t border-red-100">
             <button
               onClick={handleDeleteStore}
               disabled={isUpdating || isDeleting}

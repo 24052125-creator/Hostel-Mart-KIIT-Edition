@@ -18,44 +18,29 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
-  const { cart } = useCart();
-  
-  let [cartItemCount, setCartItemCount] = useState(0);
-const [lastOrderPlaced, setLastOrderPlaced] = useState(false);
+  const { cart, loading: cartLoading, refreshCart } = useCart();
+  const [cartItemCount, setCartItemCount] = useState(0);
+  const [lastOrderPlaced, setLastOrderPlaced] = useState(false);
 
-useEffect(() => {
-  const fetchCartStatus = async () => {
-    try {
-      const res = await fetch("/api/cart/count", {
-        credentials: "include",
-      });
-      
-      // Check if response is OK and is JSON before parsing
-      if (res.ok && res.headers.get("content-type")?.includes("application/json")) {
-        const data = await res.json();
-        setCartItemCount(data.count);
-      } else {
-        setCartItemCount(0);
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        await refreshCart();
+        setLastOrderPlaced(localStorage.getItem("lastOrderId") === "placed");
       }
+    };
+    fetchStatus();
+  }, [refreshCart]);
 
-      // optional: fetch order status from backend
-      const orderRes = await fetch("/api/orders/last");
-      if (orderRes.ok && orderRes.headers.get("content-type")?.includes("application/json")) {
-        const orderData = await orderRes.json();
-        setLastOrderPlaced(orderData.status === "placed");
-      } else {
-        setLastOrderPlaced(false);
-      }
-
-    } catch (err) {
-      console.error(err);
+  useEffect(() => {
+    if (cart) {
+      const count = cart.items.reduce((acc, item) => acc + item.quantity, 0);
+      setCartItemCount(count);
+    } else {
       setCartItemCount(0);
-      setLastOrderPlaced(false);
     }
-  };
-
-  fetchCartStatus();
-}, []);
+  }, [cart]);
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -106,7 +91,6 @@ useEffect(() => {
     router.push(`/products/${storeId}`);
   };
 
-  cartItemCount = cart ? cart.items.reduce((acc, item) => acc + item.quantity, 0) : 0;
 
   return (
     <div className="flex min-h-screen bg-[#f8fafc]">

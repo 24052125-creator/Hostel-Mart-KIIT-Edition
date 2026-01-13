@@ -43,8 +43,8 @@ export default function StoreProductsPage() {
     }
   }, [storeId]);
 
-  const handleAddToCart = (product: Product) => {
-    const success = addToCart(product, storeId);
+  const handleAddToCart = async (product: Product) => {
+    const success = await addToCart(product, storeId);
     if (success) {
       toast.success(`${product.name} added to cart!`);
     }

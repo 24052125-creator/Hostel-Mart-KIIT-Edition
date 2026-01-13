@@ -9,39 +9,16 @@ import { placeOrder } from "@/lib/api/orders";
 
 export default function CartPage() {
   const router = useRouter();
-  const { cart, setCart, removeCart } = useCart();
+  const { cart, clearCartOnly, updateQuantity, removeFromCart } = useCart();
   const [loading, setLoading] = React.useState(false);
   
 
-  const handleUpdateQuantity = (productId: string, delta: number) => {
-    if (!cart) return;
-    
-    const updatedItems = cart.items.map(item => {
-      if (item.productId === productId) {
-        const newQuantity = item.quantity + delta;
-        
-        if (delta > 0 && newQuantity > (item.stock || 0)) {
-           toast.error(`Only ${item.stock} items available in stock`);
-           return item;
-        }
-
-        return { ...item, quantity: Math.max(1, newQuantity) };
-      }
-      return item;
-    });
-
-    setCart({ ...cart, items: updatedItems });
+  const handleUpdateQuantity = async (productId: string, delta: number) => {
+    await updateQuantity(productId, delta);
   };
 
-  const handleRemoveItem = (productId: string) => {
-    if (!cart) return;
-    
-    const updatedItems = cart.items.filter(item => item.productId !== productId);
-    if (updatedItems.length === 0) {
-      removeCart();
-    } else {
-      setCart({ ...cart, items: updatedItems });
-    }
+  const handleRemoveItem = async (productId: string) => {
+    await removeFromCart(productId);
     toast.info("Item removed from cart");
   };
 
@@ -66,7 +43,7 @@ export default function CartPage() {
       await placeOrder(orderData, token);
       
       toast.success("Order Placed Successfully");
-      removeCart();
+      await clearCartOnly();
       
       // Store a flag or redirect to my orders
       localStorage.setItem("lastOrderId", "placed"); // Simple flag to trigger UI change elsewhere
@@ -79,7 +56,10 @@ export default function CartPage() {
     }
   };
 
-  const total = cart?.items.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0) || 0;
+  const total = cart?.items.reduce((acc, item) => {
+    const price = parseFloat(item.price || "0");
+    return acc + (price * item.quantity);
+  }, 0) || 0;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] pb-20">
@@ -141,7 +121,7 @@ export default function CartPage() {
                        <span className="font-bold text-gray-900 w-4 text-center">{item.quantity}</span>
                        <button 
                          onClick={() => handleUpdateQuantity(item.productId, 1)}
-                         disabled={item.quantity >= (item.stock || 0)}
+                         disabled={item.stock <= 0}
                          className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                        >
                          <FaPlus />

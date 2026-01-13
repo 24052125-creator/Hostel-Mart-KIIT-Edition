@@ -40,24 +40,30 @@ export function isTokenExpired(token: string | null): boolean {
 }
 
 /**
- * Handle logout - clear localStorage and redirect
+ * Handle logout - clear localStorage, call API to clear cookie, and redirect
  */
-export function handleLogout(showToast: boolean = false, redirectTo: string = '/'): void {
-    // Clear all auth-related data
+export async function handleLogout(showToast: boolean = false, redirectTo: string = '/'): Promise<void> {
+    // 1. Clear the token cookie via API (since it's httpOnly)
+    try {
+        await fetch('/api/logout', { method: 'POST' });
+    } catch (error) {
+        console.error('Error calling logout API:', error);
+        // Fallback: try to clear it client-side anyway (won't work for httpOnly but safe to have)
+        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Strict;";
+    }
+
+    // 2. Clear all auth-related data from localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('store');
     localStorage.removeItem('role');
     localStorage.removeItem('lastOrderId');
 
-    // Clear the token cookie
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Strict;";
-
     if (showToast) {
-        toast.error('Your session has expired. Please login again.');
+        toast.error('You have been logged out.');
     }
 
-    // Redirect to home page
+    // 3. Redirect to destination
     if (typeof window !== 'undefined') {
         window.location.href = redirectTo;
     }

@@ -5,6 +5,7 @@ import React, { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useStore } from "@/hooks/use-store";
 import { getStoreByUserId } from "@/lib/api/stores";
+import { HOSTELS, FLOORS } from "@/lib/constants";
 // import FileUpload from "@/components/fileUpload";
 // import { IKUploadResponse } from "imagekitio-next/dist/types/components/IKUpload/props";
 
@@ -129,20 +130,32 @@ export default function Dasboard() {
             />
           </div>
           <div className="w-full">
-            <input
-            name="hostel"
-              className="w-full bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              type="text"
-              placeholder="Hostel"
-            />
+            <select
+              name="hostel"
+              required
+              className="w-full bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none"
+            >
+              <option value="" disabled selected>Select Hostel</option>
+              {HOSTELS.map((hostel) => (
+                <option key={hostel} value={hostel}>
+                  {hostel}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="w-full">
-            <input
-            name="floor"
-              className="w-full bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              type="text"
-              placeholder="Floor"
-            />
+            <select
+              name="floor"
+              required
+              className="w-full bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none"
+            >
+              <option value="" disabled selected>Select Floor</option>
+              {FLOORS.map((floor) => (
+                <option key={floor} value={floor}>
+                  {floor}
+                </option>
+              ))}
+            </select>
           </div>
           
           {error && <div>
