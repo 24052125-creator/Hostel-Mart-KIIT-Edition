@@ -3,6 +3,7 @@ import connectDB from "../../mongodb";
 import decodeToken from "../../auth";
 import Order from "@/models/Order";
 import User from "@/models/User";
+import Product from "@/models/Product";
 
 export async function POST(req: NextRequest) {
     const token = req.headers.get("Authorization")?.split(" ")[1];
@@ -24,6 +25,22 @@ export async function POST(req: NextRequest) {
 
         if (!storeId || !items || items.length === 0 || !totalAmount) {
             return NextResponse.json({ message: "Missing order details" }, { status: 400 });
+        }
+
+        // 1. Validate Stock
+        for (const item of items) {
+            const product = await Product.findById(item.productId);
+            if (!product) {
+                return NextResponse.json({ message: `Product not found: ${item.name}` }, { status: 404 });
+            }
+            if (product.stock < item.quantity) {
+                return NextResponse.json({ message: `Insufficient stock for ${product.name}. Available: ${product.stock}` }, { status: 400 });
+            }
+        }
+
+        // 2. Decrement Stock
+        for (const item of items) {
+            await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity } });
         }
 
         const newOrder = new Order({

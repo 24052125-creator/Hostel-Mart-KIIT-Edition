@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
 
         if (!parsedBody.success)
             return NextResponse.json({
-                message: "Invalid request body"
+                message: "Invalid request body",
+                errors: parsedBody.error.format()
             }, { status: 400 });
 
         const { userName, password } = parsedBody.data;

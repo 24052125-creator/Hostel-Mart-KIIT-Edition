@@ -10,6 +10,11 @@ export default function ActiveOrdersPage() {
   const { store } = useStore();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const loadStoreOrders = async () => {
@@ -37,7 +42,7 @@ export default function ActiveOrdersPage() {
     <div className="min-h-screen bg-[#f8fafc] pb-20 p-8">
       <header className="mb-10">
         <h1 className="text-4xl font-black text-gray-900 mb-2">Active Orders</h1>
-        <p className="text-gray-500 font-medium">Manage incoming orders for {store?.name || "your store"}</p>
+        <p className="text-gray-500 font-medium">Manage incoming orders for {mounted ? (store?.name || "your store") : "your store"}</p>
       </header>
 
       {loading ? (

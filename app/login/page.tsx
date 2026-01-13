@@ -57,16 +57,25 @@ export default function LoginPage() {
                router.push("/");
           }
         }
-        catch (error) {
-         console.error("Error during login:", error);
-         if (axios.isAxiosError(error)) {
-          const msg = (error.response?.data as { message?: string ; error?: string;} | undefined)?.message;
-          const message = typeof msg === 'string' ? msg : "Login failed. Please try again.";
-          setServerError(message);
-          toast.error(message);
+        catch (error: any) {
+         if (axios.isAxiosError(error) && error.response) {
+           // Handle known server errors (400, 401, etc.)
+           const msg = (error.response?.data as { message?: string; error?: string } | undefined)?.message;
+           const message = typeof msg === 'string' ? msg : "Login failed. Please check your credentials.";
+           setServerError(message);
+           toast.error(message);
+           
+           // Only log full error if it's NOT a 400 (validation/auth error)
+           if (error.response.status !== 400 && error.response.status !== 401) {
+             console.error("Login Error:", error);
+           } else {
+             console.warn("Login Failed:", message);
+           }
          } else {
-          setServerError("Login failed. Please try again.");
-          toast.error("Login failed. Please try again.");
+           // Network or unknown errors
+           console.error("Unexpected Login Error:", error);
+           setServerError("An unexpected error occurred. Please try again.");
+           toast.error("An unexpected error occurred.");
          }
         }
         finally

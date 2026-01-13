@@ -25,7 +25,7 @@ export function useCart() {
 
         try {
             const user = JSON.parse(userStr);
-            const backendCart = await getCartAPI(user.id, token);
+            const backendCart = await getCartAPI(user._id || user.id, token);
 
             if (backendCart && backendCart.items) {
                 // Flatten populated items
@@ -65,7 +65,12 @@ export function useCart() {
                     if (localCart.items.length > 0) {
                         toast.info("Syncing your local cart to the cloud...");
                         for (const item of localCart.items) {
-                            await addToCartAPI(localCart.storeId, item.productId, item.quantity, token);
+                            try {
+                                await addToCartAPI(localCart.storeId, item.productId, item.quantity, token);
+                            } catch (error: any) {
+                                console.warn(`Failed to sync item ${item.productId}:`, error.message);
+                                // Continue syncing other items
+                            }
                         }
                         toast.success("Cart synced successfully!");
                     }
@@ -80,21 +85,7 @@ export function useCart() {
         syncCart();
     }, [fetchCart]);
 
-    const updateStockInBackend = async (productId: string, stockChange: number) => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
 
-        try {
-            const response = await fetch(`/api/getProduct/${productId}`);
-            const data = await response.json();
-            if (data.success && data.product) {
-                const newStock = Math.max(0, data.product.stock + stockChange);
-                await updateProduct(productId, { stock: newStock }, token);
-            }
-        } catch (error) {
-            console.error("Failed to sync stock:", error);
-        }
-    };
 
     const addToCart = async (product: any, storeId: string): Promise<boolean> => {
         const token = localStorage.getItem('token');
@@ -103,7 +94,7 @@ export function useCart() {
             return false;
         }
 
-        if (cart && cart.items.length > 0 && cart.storeId !== storeId) {
+        if (cart && cart.items.length > 0 && cart.storeId && cart.storeId.toString() !== storeId.toString()) {
             toast.error("Cart contains items from another store. Please clear cart first.");
             return false;
         }
@@ -113,10 +104,8 @@ export function useCart() {
             return false;
         }
 
-        try {
-            // Update Backend Stock
-            await updateStockInBackend(product._id || product.productId, -1);
 
+        try {
             // Add to Backend Cart
             await addToCartAPI(storeId, product._id || product.productId, 1, token);
 
@@ -146,9 +135,6 @@ export function useCart() {
         }
 
         try {
-            // Update Backend Stock
-            await updateStockInBackend(productId, -delta);
-
             // Update Backend Cart
             await updateCartItemAPI(productId, newQty, token);
 
@@ -167,9 +153,6 @@ export function useCart() {
         if (!item) return;
 
         try {
-            // Restore Backend Stock
-            await updateStockInBackend(productId, item.quantity);
-
             // Remove from Backend Cart
             await removeCartItemAPI(productId, token);
 
@@ -187,7 +170,7 @@ export function useCart() {
 
         try {
             const user = JSON.parse(userStr);
-            await clearCartAPI(user.id, token);
+            await clearCartAPI(user._id || user.id, token);
             setCartState(null);
         } catch (error: any) {
             console.error("Failed to clear cart:", error);
@@ -201,13 +184,8 @@ export function useCart() {
 
         try {
             const user = JSON.parse(userStr);
-            // Restore stock for all items
-            for (const item of cart.items) {
-                await updateStockInBackend(item.productId, item.quantity);
-            }
-
             // Clear Backend Cart
-            await clearCartAPI(user.id, token);
+            await clearCartAPI(user._id || user.id, token);
 
             setCartState(null);
         } catch (error: any) {

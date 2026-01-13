@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaShoppingBag, FaCommentDots, FaTimes } from "react-icons/fa";
+import { FaShoppingBag, FaCommentDots, FaTimes, FaShoppingCart } from "react-icons/fa";
 import { useState } from "react";
 
 const menuItems = [
+  { name: "My Cart", icon: FaShoppingCart, href: "/cart" },
   { name: "My Orders", icon: FaShoppingBag, href: "/orders" },
   { name: "Chatbox", icon: FaCommentDots, href: "/chats", disabled: false },
 ];

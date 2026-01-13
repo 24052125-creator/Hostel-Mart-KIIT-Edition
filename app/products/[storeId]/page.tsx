@@ -19,6 +19,7 @@ export default function StoreProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [store, setStore] = useState<StoreData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastOrderPlaced, setLastOrderPlaced] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -43,6 +44,10 @@ export default function StoreProductsPage() {
     }
   }, [storeId]);
 
+  useEffect(() => {
+    setLastOrderPlaced(localStorage.getItem("lastOrderId") === "placed");
+  }, []);
+
   const handleAddToCart = async (product: Product) => {
     const success = await addToCart(product, storeId);
     if (success) {
@@ -50,9 +55,7 @@ export default function StoreProductsPage() {
     }
   };
 
-  const cartItemCount = cart && cart.storeId === storeId 
-    ? cart.items.reduce((acc, item) => acc + item.quantity, 0) 
-    : 0;
+  const cartItemCount = cart?.items?.reduce((acc: number, item: any) => acc + item.quantity, 0) || 0;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] pb-20">
@@ -130,7 +133,7 @@ export default function StoreProductsPage() {
             <span>Go to Cart ({cartItemCount})</span>
           </button>
         </div>
-      ) : localStorage.getItem("lastOrderId") === "placed" && (
+      ) : lastOrderPlaced && (
         <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/80 backdrop-blur-lg border-t border-gray-100 flex justify-center">
           <button 
             onClick={() => router.push("/orders")}

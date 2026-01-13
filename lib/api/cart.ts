@@ -51,8 +51,8 @@ export async function getCartAPI(userId: string, token: string) {
         throw new Error(error.message || "Failed to fetch cart");
     }
     const data = await response.json();
-    // The API seems to return an array "cart" which actually contains one cart object
-    return data.cart && data.cart[0] ? data.cart[0] : null;
+    // The API returns a single cart object, not an array
+    return data.cart ? data.cart : null;
 }
 
 /**
