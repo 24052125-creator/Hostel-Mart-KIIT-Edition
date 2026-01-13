@@ -1,6 +1,6 @@
 import decodeToken from "@/app/api/auth";
 import connectDB from "@/app/api/mongodb";
-import { CartItem } from "@/hooks/use-cart";
+import { CartItem } from "@/lib/api/cart";
 import Cart from "@/models/Cart";
 import { NextRequest, NextResponse } from "next/server";
 
