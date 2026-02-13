@@ -1,0 +1,88 @@
+\documentclass[12pt]{report}
+
+% Packages
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\title{HOSTEL-MART ~ KIIT Edition}
+\author{Aadya Kumari}
+\date{\today}
+
+\begin{document}
+
+% ---------- Title Page ----------
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% ---------- Certificate ----------
+\chapter*{Certificate}
+This is to certify that the project titled \textbf{``HOSTEL-MART ~ KIIT Edition''}
+has been successfully completed by \textbf{Aadya Kumari}. This project is a specialized e-commerce platform designed to facilitate the buying and selling of goods within the KIIT University hostel ecosystem.
+
+\newpage
+
+% ---------- Acknowledgement ----------
+\chapter*{Acknowledgement}
+I would like to express my sincere gratitude to my seniors: Dhruv Rathore, Sayam Mondal and Krish Kumar and peers: Dipika Kumari, Anshu Kumar and Preksha Chaki who provided invaluable guidance throughout the development of this project. Special thanks to the open-source community for providing the robust tools and frameworks used to build this application.
+
+\newpage
+
+% ---------- Abstract ----------
+\chapter*{Abstract}
+Hostel Mart KIIT Edition is a modern web application designed to streamline the exchange of products among students living in university hostels. The platform enables students to create digital storefronts, list products, manage inventory, and securely process orders. By providing a centralized marketplace, it addresses the challenges of peer-to-peer commerce within a closed campus environment.
+
+\newpage
+
+% ---------- Table of Contents ----------
+\tableofcontents
+\newpage
+
+% ---------- Chapters ----------
+\chapter{Introduction}
+Hostel Mart is born out of the need for a simplified, secure, and efficient way for students to trade second-hand goods or small-scale services within kiit hostels. Traditional methods like WhatsApp groups or word-of-mouth often lack structure and security. This platform aims to digitize the hostel economy by providing a dedicated marketplace tailored to the KIIT student community.
+
+\chapter{System Architecture}
+The system follows a modern full-stack architecture using Next.js for both frontend and backend operations. It leverages MongoDB for data persistence and ImageKit for media management.
+\begin{figure}[h]
+\centering
+%\includegraphics[width=0.8\textwidth]{architecture.png}
+\caption{System Architecture: Next.js + MongoDB + JWT}
+\end{figure}
+
+\chapter{Technologies Used}
+\begin{itemize}
+  \item \textbf{Frontend:} Next.js 15, Tailwind CSS, Lucide Icons, Radix UI.
+  \item \textbf{Backend:} Next.js API Routes (App Router), Mongoose ODM.
+  \item \textbf{Authentication:} Custom JWT-based Authentication with Bcrypt encryption and HttpOnly cookies.
+  \item \textbf{Database:} MongoDB (Atlas).
+  \item \textbf{Storage:} ImageKit.io for optimized product image hosting.
+  \item \textbf{State Management:} React Hooks and Context API.
+\end{itemize}
+
+\chapter{Implementation}
+The application is structured into several key modules:
+\begin{itemize}
+    \item \textbf{Authentication Module:} Secure login and registration using custom JWT implementation, Bcrypt password hashing, and HttpOnly cookie management.
+    \item \textbf{Store Management:} Allows users to create, edit, and delete their own digital stores.
+    \item \textbf{Product Catalog:} Features a dynamic listing of products with categories and search functionality.
+    \item \textbf{Cart \& Order System:} Persistence-based cart management and order tracking for both buyers and sellers.
+    \item \textbf{AI Chat Assistant:} Integrated chat for scam detection and community interaction.
+\end{itemize}
+
+\chapter{Results and Discussion}
+The platform successfully allows users to register, create stores, and list products. The real-time cart synchronization ensures a seamless user experience across devices. The dashboard provides sellers with clear insights into their store performance and order history.
+
+\chapter{Conclusion and Future Scope}
+Hostel Mart KIIT Edition establishes a solid foundation for campus commerce. Future improvements include implementing real-time push notifications, integrating a dedicated payment gateway, and expanding the AI capabilities for automated product categorization.
+
+% ---------- References ----------
+\begin{thebibliography}{9}
+\bibitem{nextjs} Next.js Documentation, \textit{https://nextjs.org/docs}, 2024.
+\bibitem{mongodb} MongoDB Manual, \textit{https://www.mongodb.com/docs/manual/}, 2024.
+\bibitem{tailwind} Tailwind CSS Documentation, \textit{https://tailwindcss.com/docs}, 2024.
+\end{thebibliography}
+
+\end{document}
